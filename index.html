@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>тигорь</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --fg:#0a0a0a;
+      --muted:#6b6b6b;
+      --line:#e8e8e8;
+      --gap:24px;
+      --max:1080px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      letter-spacing: .1px;
+    }
+    a{ color:inherit; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* Side logo */
+    .side-logo{
+      position:fixed;
+      left:24px;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:56px;
+      height:56px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .side-logo img{
+      max-width:70%;
+      max-height:70%;
+      display:block;
+    }
+
+    /* Layout */
+    .wrap{
+      max-width: var(--max);
+      margin:0 auto;
+      padding: 28px var(--gap) 64px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      border-bottom:1px solid var(--line);
+      padding: 10px 0 14px;
+      margin-bottom: 28px;
+    }
+    .top-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:transparent;
+      padding:8px 10px;
+      font:inherit;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      cursor:pointer;
+    }
+    .btn:hover{ border-color:#cfcfcf; }
+    .top-right{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(44px, 6.4vw, 84px);
+      font-weight: 700;
+      letter-spacing: .02em;
+      line-height: 1.02;
+    }
+    .sub{
+      margin:0 0 22px;
+      color:var(--muted);
+      font-size: 15px;
+      line-height:1.5;
+      max-width: 62ch;
+    }
+
+    /* Tabs */
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 14px 18px;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      padding: 12px 0;
+      margin: 18px 0 26px;
+    }
+    .tab{
+      appearance:none;
+      border:0;
+      background:transparent;
+      padding:0;
+      cursor:pointer;
+      font-size: 13px;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+    }
+    .tab[aria-selected="true"]{
+      color:var(--fg);
+      text-decoration:underline;
+      text-underline-offset: 6px;
+    }
+
+    section[hidden]{ display:none; }
+
+    /* Releases grid */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
+    .cover{
+      border:1px solid var(--line);
+      background:#fff;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .cover .img{
+      width:100%;
+      aspect-ratio: 1 / 1;
+      background:#fafafa;
+      border-bottom:1px solid var(--line);
+      position:relative;
+    }
+    .cover img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .cover .cap{
+      padding:10px 10px 12px;
+      font-size: 12px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* Drawer menu (minimal) */
+    .drawer{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.34);
+      display:none;
+      z-index:50;
+    }
+    .drawer[aria-hidden="false"]{ display:block; }
+    .panel{
+      position:absolute;
+      right:0;
+      top:0;
+      height:100%;
+      width:min(420px, 92vw);
+      background:#fff;
+      border-left:1px solid var(--line);
+      padding:18px 18px 22px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:12px;
+      margin-bottom:4px;
+    }
+    .panel-title{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+    }
+    .panel a, .panel button{
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      padding:10px 10px;
+      border:1px solid var(--line);
+      background:transparent;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    footer{
+      margin-top: 44px;
+      border-top:1px solid var(--line);
+      padding-top: 16px;
+      color:var(--muted);
+      font-size: 12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 720px){
+      .side-logo{
+        position:static;
+        transform:none;
+        width:56px;
+        height:56px;
+        margin: 18px var(--gap) 0;
+      }
+      .wrap{ padding-top: 16px; }
+      header{ margin-top: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ЛОГО: положи logo.png рядом с index.html -->
+  <div class="side-logo" aria-label="Логотип">
+    <img src="logo.png" alt="тигорь — логотип" />
+  </div>
+
+  <div class="wrap">
+    <header>
+      <div class="top-left">
+        <button class="btn" id="openMenu" type="button" aria-haspopup="dialog" aria-controls="drawer">меню</button>
+      </div>
+      <nav class="top-right" aria-label="Быстрые ссылки">
+        <a href="#releases" data-jump="releases">релизы</a>
+        <a href="#contact" data-jump="contact">контакт</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>тигорь</h1>
+      <p class="sub">
+        Минимальный сайт артиста. Замените этот текст на одну короткую строку (жанр / город / настроение).
+      </p>
+
+      <div class="tabs" role="tablist" aria-label="Разделы">
+        <button class="tab" role="tab" aria-selected="true" aria-controls="about" id="tab-about" data-tab="about">об артисте</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="releases" id="tab-releases" data-tab="releases">релизы</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="contact" id="tab-contact" data-tab="contact">контакт</button>
+      </div>
+
+      <section id="about" role="tabpanel" aria-labelledby="tab-about">
+        <p class="sub" style="margin-top:0">
+          Короткое описание (2–3 предложения). Без лишнего: что за музыка, в каком настроении, что выпускалось.
+        </p>
+      </section>
+
+      <section id="releases" role="tabpanel" aria-labelledby="tab-releases" hidden>
+        <p class="sub" style="margin-top:0">
+          Обложки без ссылок. Файлы положите в папку <b>covers/</b> рядом с <b>index.html</b>.
+        </p>
+
+        <div class="grid" id="coversGrid" aria-label="Обложки релизов"></div>
+
+        <!--
+          КАК ДОБАВЛЯТЬ ОБЛОЖКИ:
+          1) Создай папку: covers
+          2) Положи туда файлы: cover-01.jpg, cover-02.jpg, ...
+          3) Обнови список covers внизу (JS).
+        -->
+      </section>
+
+      <section id="contact" role="tabpanel" aria-labelledby="tab-contact" hidden>
+        <p class="sub" style="margin-top:0">
+          Букинг / пресса: <span style="color:var(--fg)">ваш@email</span> или <span style="color:var(--fg)">@ваш_телеграм</span>
+        </p>
+      </section>
+
+      <footer>
+        © <span id="year"></span> тигорь
+      </footer>
+    </main>
+  </div>
+
+  <!-- Drawer menu -->
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Меню">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">меню</div>
+        <button class="btn" id="closeMenu" type="button">закрыть</button>
+      </div>
+
+      <button type="button" data-tab="about">об артисте</button>
+      <button type="button" data-tab="releases">релизы</button>
+      <button type="button" data-tab="contact">контакт</button>
+
+      <div style="margin-top:auto; border-top:1px solid var(--line); padding-top:12px; color:var(--muted); font-size:12px; letter-spacing:.08em; text-transform:uppercase;">
+        Минимум информации. Монохром. Типографика.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tabs
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const panels = ['about','releases','contact'].reduce((acc,id)=>{
+      acc[id] = document.getElementById(id);
+      return acc;
+    }, {});
+
+    function setTab(id, pushHash=true){
+      tabs.forEach(t => {
+        const isActive = t.dataset.tab === id;
+        t.setAttribute('aria-selected', String(isActive));
+      });
+      Object.entries(panels).forEach(([pid, el]) => {
+        el.hidden = pid !== id;
+      });
+
+      // Sync hash (optional)
+      if (pushHash) {
+        history.replaceState(null, '', '#' + id);
+      }
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+
+    // Jump links
+    document.querySelectorAll('[data-jump]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        setTab(a.dataset.jump);
+        panels[a.dataset.jump].scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // Drawer
+    const drawer = document.getElementById('drawer');
+    const openMenu = document.getElementById('openMenu');
+    const closeMenu = document.getElementById('closeMenu');
+
+    function openDrawer(){
+      drawer.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer(){
+      drawer.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+    openMenu.addEventListener('click', openDrawer);
+    closeMenu.addEventListener('click', closeDrawer);
+    drawer.addEventListener('click', (e)=>{
+      if (e.target === drawer) closeDrawer();
+    });
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape' && drawer.getAttribute('aria-hidden') === 'false') closeDrawer();
+    });
+
+    // Drawer buttons -> tabs
+    drawer.querySelectorAll('button[data-tab]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        setTab(btn.dataset.tab);
+        closeDrawer();
+        panels[btn.dataset.tab].scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // Covers list (замени на свои файлы)
+    const covers = [
+      'covers/cover-01.jpg',
+      'covers/cover-02.jpg',
+      'covers/cover-03.jpg',
+      'covers/cover-04.jpg',
+      'covers/cover-05.jpg',
+      'covers/cover-06.jpg'
+    ];
+
+    const grid = document.getElementById('coversGrid');
+    covers.forEach((src, i)=>{
+      const fig = document.createElement('figure');
+      fig.className = 'cover';
+      fig.innerHTML = `
+        <div class="img">
+          <img src="${src}" alt="Релиз ${String(i+1).padStart(2,'0')}" loading="lazy" />
+        </div>
+        <figcaption class="cap">релиз ${String(i+1).padStart(2,'0')}</figcaption>
+      `;
+      grid.appendChild(fig);
+    });
+
+    // Year
+    document.getElementById('year').textContent = String(new Date().getFullYear());
+
+    // Initial tab from hash
+    const initial = (location.hash || '#about').slice(1);
+    if (panels[initial]) setTab(initial, false);
+  </script>
+</body>
+</html>
